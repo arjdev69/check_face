@@ -5,7 +5,7 @@ import sys, getopt
 import numpy as np
 #import matplotlib.pyplot as plt
 
-tam = 0; texto = ""; crop_img = ""; vis = ""; fn = ""
+i = tam = 0; texto = ""; crop_img = ""; vis = ""; fn = ""
 font = cv2.FONT_HERSHEY_SIMPLEX
 template = cv2.imread('recote_padrao.png',0)
 w, h = template.shape[::-1]
@@ -24,16 +24,17 @@ def draw_rects(img, rects, color, img_gray, name):
     loc = np.where(res >= threshold)
     tam = len(loc[1]+loc[0])
     if tam > 0:
+      name = "bruno"
       cv2.putText(img,'%s'%name,(x1,y1-20), font, 1,(255,255,255),1,cv2.LINE_AA)
       test = cv2.rectangle(img, (x1, y1), (x2, y2), color,2)
     else:
      cv2.putText(img,'Nao Encontrada',(x1,y1-20), font, 1,(255,255,255),1,cv2.LINE_AA)
      test = cv2.rectangle(img, (x1, y1), (x2, y2), color,2)
-def takePicture(x, top, bottom, left, right):
+def takePicture(x, i, top, bottom, left, right):
   timestamp = time.strftime("%S", time.localtime())
   top = 125; bottom = 380; left = 250; right = 450;
   if x == 1:
-    fn = '%s/%s.jpg' % ('./img', timestamp)
+    fn = '%s/%s.jpg' % ('./img', i)
     crop_img = img[top:bottom, left:right]
     crop_img = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
     cv2.imshow('%s'%timestamp,crop_img)
@@ -63,9 +64,10 @@ while True:
     vis_roi = vis[y1:y2, x1:x2]
     subrects = detect(roi.copy(), nested)
     if keyboard == ord(' '):
+      i += 1
       x = 1
       texto = raw_input("Digite:")
-      takePicture(x, x1, y2, x2, y1)
+      takePicture(x, i, x1, y2, x2, y1)
   if keyboard == 27:
       break
   cv2.imshow('facedetect', vis)
