@@ -7,8 +7,8 @@ import numpy as np
 
 i = tam = 0; texto = ""; crop_img = ""; vis = ""; fn = ""
 font = cv2.FONT_HERSHEY_SIMPLEX
-template = cv2.imread('recote_padrao.png',0)
-w, h = template.shape[::-1]
+# template = cv2.imread('recote_padrao.png',0)
+#w, h = template.shape[::-1]
 
 def detect(img, cascade):
   rects = cascade.detectMultiScale(img, scaleFactor=1.3, minNeighbors=4, minSize=(30, 30), flags = cv2.CASCADE_SCALE_IMAGE)
@@ -17,28 +17,31 @@ def detect(img, cascade):
   rects[:,2:] += rects[:,:2]
   return rects
 
-def draw_rects(img, rects, color, img_gray, name):
+def draw_rects(img, rects, color, img_gray, name, i):
   for x1, y1, x2, y2 in rects:
+    fotos = '%s/%s.jpg' % ('./img', 1)
+    template = cv2.imread(fotos,0)
     res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED)
     threshold = 0.8
     loc = np.where(res >= threshold)
-    tam = len(loc[1]+loc[0])
+    tam = len(loc[0])
     if tam > 0:
       name = "bruno"
-      cv2.putText(img,'%s'%name,(x1,y1-20), font, 1,(255,255,255),1,cv2.LINE_AA)
+      cv2.putText(img,'%s'%name,(x1,y1-20), font, 1,(0,255,0),1,cv2.LINE_AA)
       test = cv2.rectangle(img, (x1, y1), (x2, y2), color,2)
     else:
      cv2.putText(img,'Nao Encontrada',(x1,y1-20), font, 1,(255,255,255),1,cv2.LINE_AA)
      test = cv2.rectangle(img, (x1, y1), (x2, y2), color,2)
 def takePicture(x, i, top, bottom, left, right):
+  imgs = []
   timestamp = time.strftime("%S", time.localtime())
   top = 125; bottom = 380; left = 250; right = 450;
   if x == 1:
     fn = '%s/%s.jpg' % ('./img', i)
     crop_img = img[top:bottom, left:right]
     crop_img = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
-    cv2.imshow('%s'%timestamp,crop_img)
-    cv2.imwrite(fn,crop_img)
+    cv2.imshow(fn,crop_img)
+    cv2.imwrite(fn,crop_img) 
     print (fn, 'saved')
 
 args, video_src = getopt.getopt(sys.argv[1:], '', ['cascade=', 'nested-cascade='])
@@ -57,14 +60,14 @@ while True:
   gray = cv2.equalizeHist(gray)
   rects = detect(gray, cascade)
   vis = img.copy()
-  draw_rects(vis, rects, (0, 1, 0), gray, texto)
+  draw_rects(vis, rects, (0, 1, 0), gray, texto, i)
   keyboard = cv2.waitKey(1)
   for x1, y1, x2, y2 in rects:
     roi = gray[y1:y2, x1:x2]
     vis_roi = vis[y1:y2, x1:x2]
     subrects = detect(roi.copy(), nested)
     if keyboard == ord(' '):
-      i += 1
+      i = i + 1
       x = 1
       texto = raw_input("Digite:")
       takePicture(x, i, x1, y2, x2, y1)
