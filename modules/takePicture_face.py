@@ -7,7 +7,6 @@ def takePicture(x, i, top, bottom, left, right, img):
   bottom = 380
   left = 250
   right = 450
-  cv2.imshow('.', img)
   if x == 1:
     fn = '%s/%s.jpg' % ('./img', i)
     crop_img = img[top:bottom, left:right]

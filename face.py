@@ -5,10 +5,8 @@ from modules import *
 args, video_src = getopt.getopt(
     sys.argv[1:], '', ['cascade=', 'nested-cascade='])
 args = dict(args)
-cascade_fn = args.get(
-    '--cascade', "./data/haarcascades/haarcascade_frontalface_alt.xml")
-nested_fn = args.get('--nested-cascade',
-                     "./data/haarcascades/haarcascade_eye.xml")
+cascade_fn = args.get('--cascade', "./data/haarcascades/haarcascade_frontalface_alt.xml")
+nested_fn = args.get('--nested-cascade',"./data/haarcascades/haarcascade_eye.xml")
 
 cascade = cv2.CascadeClassifier(cascade_fn)
 nested = cv2.CascadeClassifier(nested_fn)
